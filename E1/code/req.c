@@ -111,9 +111,8 @@ float calc_ParallelSerie(char ex[]){
       }
       
       // exectrat
-      if(open > 0){
+      if(open > 0 && open == close){
         
-        if(open == close){
           close_idx = i;
           
           //open_idx++; // remove first ( char
@@ -156,13 +155,6 @@ float calc_ParallelSerie(char ex[]){
            subex[0] = '\0';
            */
           
-        }
-        else{
-          if(open > 1){
-            // subex[subex_idx++] = ex[i];
-          }
-          
-        }
       }
       
       
