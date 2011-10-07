@@ -5,8 +5,12 @@
 #define FALSE 0
 #define TRUE 1
 
-#define SERIE 's'
-#define PARALLEL 'p'
+#define SERIE_L 's'
+#define SERIE_H 'S'
+#define PARALLEL_L 'p'
+#define PARALLEL_H 'P'
+#define PARALLEL_H 'P'
+#define INPUT "%[ 0-9.psPS()]"
 
 int isNum(char c){
   switch (c) {
@@ -177,24 +181,20 @@ float calc_ParallelSerie(char ex[]){
           }
         } 
       }
-      else if(ex[i] == SERIE || ex[i] == PARALLEL) // get operation
+      else if(ex[i] == SERIE_L || ex[i] == SERIE_H || ex[i] == PARALLEL_L || ex[i] == PARALLEL_H) // get operation
       {
         cmd = ex[i];
       }
-      
-      
-      
-      
     }
     
     // calc
     if(num_capture == -1)
     { 
-      if(cmd == SERIE)
+      if(cmd == SERIE_L || cmd == SERIE_L)
       {
         num1 = num1 + num2;
       }
-      else if(cmd == PARALLEL)
+      else if(cmd == PARALLEL_L || cmd == PARALLEL_H)
       {
         num1 = (num1*num2)/(num1+num2);
       }
@@ -214,11 +214,11 @@ int main (int argc, const char * argv[])
 {
   
   float res_eq = 0.0;
-  
+  char ex[10000];
   //             0    5    1    1    2  
   //                       0    5    0
   //char ex[] = "50 p ((20 s 40) p (70 s ((90 p 80) p (30 s 10))))";
-  char ex[1000];
+
   //  char ex[] =       "(20 s 40) p (70 s ((90 p 80) p (30 s 10))))";
   //char ex[] =                      "70.67 s ((90 p 80) p (30 s 10))";
   //           50 p (60 p (70 s (42.35 p 40)))
@@ -242,7 +242,7 @@ int main (int argc, const char * argv[])
     printf("%f", res_eq);
   }
   else {
-    input_s(ex, "%[ 0-9.ps()]", "Input Expression:\n", 1000, 0);
+    input_s(ex, INPUT, "Input Expression:\n", 1000, 0);
     res_eq = calc_ParallelSerie(ex);
     printf("equivalent resistor: %f Ω\n", res_eq);
   }
