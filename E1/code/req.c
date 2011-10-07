@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "eng_notation_si_pref.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -11,6 +12,59 @@
 #define PARALLEL_H 'P'
 #define PARALLEL_H 'P'
 #define INPUT "%[ 0-9.psPS()]"
+
+
+int isNum(char c);
+void input_s(char *in, const char pattern[], const char msg[], int size, const int force_size);
+float calc_ParallelSerie(char ex[]);
+
+
+int main (int argc, const char * argv[])
+{
+  
+  float res_eq = 0.0;
+  char ex[10000];
+  
+  if (argc > 1 && argv[1] && argv[2] && argv[1][0] == '-' && argv[1][1] == 'p') {
+    // convert pointer of char[] to char[]
+    strcpy(ex, argv[2]);
+    res_eq = calc_ParallelSerie(ex);
+    
+    if(argv[1][2] == 'f')
+    {
+      printf("%sΩ", eng(res_eq, 4, 0));
+    }
+    else
+    {
+      printf("%.2f", res_eq);
+    }
+  }
+  else {
+    printf( "\nTeaching: ATC I\n" );
+    printf( "Exercise: T1\n" );
+    printf( "Studant: Leonardo Costa (no. 62936)\n" );
+    printf( "Year: 2011-2012\n" );
+
+    printf("\nHELP:");
+    printf("\n\texpression syntax");
+    printf("\n\t\t%c | %c - parallel", PARALLEL_L, PARALLEL_H);
+    printf("\n\t\t%c | %c - serie", SERIE_L, SERIE_H);
+    printf("\n\n\tfor command-line pipe use");
+    printf("\n\t   req -p \"EXPRESSION\"");
+    printf("\n\tOR format in engineering notation");
+    printf("\n\t   req -pf \"EXPRESSION\"");
+    printf("\n\n\tEXAMPLE:");
+    printf("\n\treq -p \"(40 p 50) s (85.9 p 45)\" > file.txt # result = \"51.75\"");
+    printf("\n\treq -pf \"(25000 S 1000) P 3500\" > file.txt # result = \"3.070 kΩ\"");
+    printf("\n\n");
+    input_s(ex, INPUT, "Input Parallel-Serie Expression:\n", 10000, 0);
+    res_eq = calc_ParallelSerie(ex);
+    printf("\n-> equivalent resistor: %sΩ\n", eng(res_eq, 4, 0));
+  }
+  
+  return 0;
+}
+
 
 int isNum(char c){
   switch (c) {
@@ -79,7 +133,7 @@ float calc_ParallelSerie(char ex[]){
   
   float num1;
   float num2;
-  char num_parse[10] = "";
+  char num_parse[100] = "";
   int num_capture = 1;
   
   char ps[2] = " \0";
@@ -99,12 +153,7 @@ float calc_ParallelSerie(char ex[]){
       
       
       if(ex[i] == '(')
-      {
-        
-        // colocar aqui clico para encontrar o )
-        // passar i para a posicao )+1
-        
-        
+      {        
         open_idx = i;
         while(TRUE)
         {
@@ -207,51 +256,4 @@ float calc_ParallelSerie(char ex[]){
   }// end while
   
   return num1;
-}
-
-
-int main (int argc, const char * argv[])
-{
-  
-  float res_eq = 0.0;
-  char ex[10000];
-  //             0    5    1    1    2  
-  //                       0    5    0
-  //char ex[] = "50 p ((20 s 40) p (70 s ((90 p 80) p (30 s 10))))";
-
-  //  char ex[] =       "(20 s 40) p (70 s ((90 p 80) p (30 s 10))))";
-  //char ex[] =                      "70.67 s ((90 p 80) p (30 s 10))";
-  //           50 p (60 p (70 s (42.35 p 40)))
-  //           50 p (60 p (70 s 20.57))
-  //           50 p (60 p 90.57)
-  //           20.96
-  
-  //char ex[] = "50 s 50 s 50 s 50"; // good
-  //char ex[] = "50 p 50 p 50 p 50"; // good
-  
-  //char ex[] = "(50 s 50) s (50 s 50)"; // good
-  
-  //char ex[] = "(50 p 50) p (50 p 50)"; // good
-  
-  //char ex[] = "50 p (50 p 50)"; // good
-  
-  //input_s(char *in, const char pattern[], const char msg[], int size, const int force_size)
-  
-  if (argv[1] && argv[2] && argv[1][0] == '-' && argv[1][1] == 'p') {
-    res_eq = calc_ParallelSerie(argv[2]);
-    printf("%f", res_eq);
-  }
-  else {
-    input_s(ex, INPUT, "Input Expression:\n", 1000, 0);
-    res_eq = calc_ParallelSerie(ex);
-    printf("equivalent resistor: %f Ω\n", res_eq);
-  }
-
-  
-  
-  
-  
-  
-  
-  return 1;
 }
