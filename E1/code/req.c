@@ -1,3 +1,13 @@
+/*
+ 
+ Teaching: ATC I
+ Exercise: T1
+ Studant: Leonardo Costa (no. 62936)
+ 2011-2012
+ SCM Repository: http://goo.gl/aOVGQ
+ 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +22,7 @@
 #define PARALLEL_H 'P'
 #define PARALLEL_H 'P'
 #define INPUT "%[ 0-9.psPS()]"
+#define OHMS "Ω" /* If this does not work reliably on your system, use the conventional surrogate "ohms" for "Ω" */
 
 
 int isNum(char c);
@@ -26,13 +37,13 @@ int main (int argc, const char * argv[])
   char ex[10000];
   
   if (argc > 1 && argv[1] && argv[2] && argv[1][0] == '-' && argv[1][1] == 'p') {
-    // convert pointer of char[] to char[]
+    
     strcpy(ex, argv[2]);
     res_eq = calc_ParallelSerie(ex);
     
     if(argv[1][2] == 'f')
     {
-      printf("%sΩ", eng(res_eq, 4, 0));
+      printf("%s%s", eng(res_eq, 4, 0), OHMS);
     }
     else
     {
@@ -53,13 +64,13 @@ int main (int argc, const char * argv[])
     printf("\n\t   req -p \"EXPRESSION\"");
     printf("\n\tOR format in engineering notation");
     printf("\n\t   req -pf \"EXPRESSION\"");
-    printf("\n\n\tEXAMPLE:");
+    printf("\n\n\tEXAMPLES:");
     printf("\n\treq -p \"(40 p 50) s (85.9 p 45)\" > file.txt # result = \"51.75\"");
-    printf("\n\treq -pf \"(25000 S 1000) P 3500\" > file.txt # result = \"3.070 kΩ\"");
+    printf("\n\treq -pf \"(25000 S 1000) P 3500\" > file.txt # result = \"3.070 k%s\"", OHMS);
     printf("\n\n");
     input_s(ex, INPUT, "Input Parallel-Serie Expression:\n", 10000, 0);
     res_eq = calc_ParallelSerie(ex);
-    printf("\n-> equivalent resistor: %sΩ\n", eng(res_eq, 4, 0));
+    printf("\n-> equivalent resistor: %s%s\n", eng(res_eq, 4, 0), OHMS);
   }
   
   return 0;
@@ -104,7 +115,7 @@ void input_s(char *in, const char pattern[], const char msg[], int size, const i
     }
     else
     {
-      printf("Erro de inserção. Tente de novo!\n%s", msg);
+      printf("Insertion error . Try again!\n%s", msg);
     }
     
     /* clear buffer */
@@ -119,9 +130,8 @@ void input_s(char *in, const char pattern[], const char msg[], int size, const i
 
 
 float calc_ParallelSerie(char ex[]){
-  char subex[strlen(ex)];
   
-  //printf("%s\n", ex);
+  char subex[strlen(ex)];
   
   int i=-1;
   int f=0;
@@ -131,8 +141,8 @@ float calc_ParallelSerie(char ex[]){
   int close_idx = -1;
   int subex_idx = 0;
   
-  float num1;
-  float num2;
+  float num1 = 0.0;
+  float num2 = 0.0;
   char num_parse[100] = "";
   int num_capture = 1;
   
@@ -142,22 +152,20 @@ float calc_ParallelSerie(char ex[]){
   while(TRUE){
     i++;
     
+    /* end of expression */
     if(ex[i] == '\0'){
       break; 
     }
     else {
-      //printf("ex%i - %c\n", i, ex[i]);
-      //printf("subex%i - %c\n", i, subex[i]);
-      
-      
-      
-      
       if(ex[i] == '(')
       {        
         open_idx = i;
+        
+        /* parse expression */
         while(TRUE)
         {
-          
+
+          /* counter opened and closed brackets */
           if(ex[i] == '(')
           {
             open++;
@@ -166,9 +174,8 @@ float calc_ParallelSerie(char ex[]){
           {
             close++;
           }
-          
-          
-          // exectrat
+
+          /* exectrat sub-expression */
           if(open > 0 && open == close){
             
             close_idx = i;
@@ -193,7 +200,7 @@ float calc_ParallelSerie(char ex[]){
               num_capture = -1;
             }
             
-            // clear
+            /* reset control vars */
             open = 0;
             close = 0;
             open_idx = -1;
@@ -201,21 +208,21 @@ float calc_ParallelSerie(char ex[]){
             break;
             
           }
-          
-          
           i++;
         }
         
       }
-      else if(isNum(ex[i])) // get numbers
+      
+      /* parse char number */
+      else if(isNum(ex[i]))
       {
         
         ps[0] = ex[i];
         ps[1] = '\0';
         strcat(num_parse, ps);
         
+        /* check end of number */
         if(isNum(ex[i+1]) == FALSE){
-          //printf("%s\n", num_parse);
           if(num_capture == 1)
           {
             num1 = atof(num_parse);
@@ -230,13 +237,15 @@ float calc_ParallelSerie(char ex[]){
           }
         } 
       }
-      else if(ex[i] == SERIE_L || ex[i] == SERIE_H || ex[i] == PARALLEL_L || ex[i] == PARALLEL_H) // get operation
+      
+      /* get operator */
+      else if(ex[i] == SERIE_L || ex[i] == SERIE_H || ex[i] == PARALLEL_L || ex[i] == PARALLEL_H)
       {
         cmd = ex[i];
       }
     }
     
-    // calc
+    /* calculate equivalent resistor */
     if(num_capture == -1)
     { 
       if(cmd == SERIE_L || cmd == SERIE_L)
@@ -248,12 +257,11 @@ float calc_ParallelSerie(char ex[]){
         num1 = (num1*num2)/(num1+num2);
       }
       
-      
       num_capture = 2;
     }
     
     
-  }// end while
+  }/* end while */
   
   return num1;
 }
