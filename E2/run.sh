@@ -1,6 +1,7 @@
-LIBS_CODE=""
+LIBS_CODE="manager.c ui.c"
 APP_CODE="biblo.c"
+APP_EXE="biblo"
 
 mkdir -p code/build
 cd code
-gcc $LIBS_CODE $APP_CODE -o build/$APP_CODE && ./build/$APP_CODE
+gcc $LIBS_CODE $APP_CODE -o build/$APP_EXE && ./build/$APP_EXE
