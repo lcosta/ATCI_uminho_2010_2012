@@ -17,7 +17,7 @@ void Inputs(char *in, const char pattern[], const char msg[], int size, const in
 void Inputd(void *in, const char pattern[], const char msg[]);
 
 void Menu();
-void Inputbook(t_book * book);
+void Inputbook(t_book * book, int id_show);
 void Insertbook();
 void Editbook();
 void Deletebook();

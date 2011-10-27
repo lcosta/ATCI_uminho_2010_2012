@@ -15,6 +15,11 @@
 
 int main (int argc, const char * argv[])
 {   
+    // make DB file
+    FILE * pFile;
+    pFile = fopen (DB_FILE, "a+b");
+    fclose(pFile);
+    
     // start shell app
     Menu();   
     return 0;

@@ -111,9 +111,11 @@ void Menu(){
     }
 }
 
-void Inputbook(t_book * book){
+void Inputbook(t_book * book, int id_show){
     
-    Inputs(book->id, P_ID, "Digite o ID? ", SIZE_ID, FALSE);
+    if(id_show){
+        Inputs(book->id, P_ID, "Digite o ID? ", SIZE_ID, FALSE);
+    }
     Inputs(book->cdu, P_CDU, "Digite o CDU? ", SIZE_CDU, FALSE);
     Inputs(book->title, P_TEXT, "Digite o titulo? ", SIZE_TITLE, FALSE);
     Inputs(book->author, P_TEXT, "Digite o autor? ", SIZE_AUTHOR, FALSE);
@@ -126,7 +128,7 @@ void Inputbook(t_book * book){
 
 void Insertbook(){
     t_book book;
-    Inputbook(&book);
+    Inputbook(&book, TRUE);
     
     int status = Insert(&book);
     
@@ -137,7 +139,7 @@ void Insertbook(){
         printf("\nJa existe livro com o ID '%s'. Tente de novo\n\n", book.id);
     }
     else {
-        printf("Error ao tentar guardar os dados.\n");
+        printf("Error ao tentar guardar os dados.\n\n");
     }
     
     
@@ -147,9 +149,18 @@ void Editbook(){
     char id[SIZE_ID];
     Inputs(id, P_TEXT, "Qual o ID do livro a editar? ", SIZE_ID, FALSE);
     t_book book;
-    Inputbook(&book);
-    if(!Edit(id, &book)){
-        printf("Error ao tentar guardar os dados.\n");
+    Inputbook(&book, FALSE);
+    
+    int status = Edit(id, &book);
+    
+    if(status == 1){
+        printf("Livro alterado com sucesso.\n\n");
+    }
+    else if(status == -1){
+        printf("\nNao existe livro com o ID '%s'. Tente de novo\n\n", book.id);
+    }
+    else {
+        printf("Error ao tentar guardar os dados.\n\n");
     }
 }
 
@@ -158,7 +169,7 @@ void Deletebook(){
     Inputs(id, P_TEXT, "Qual o ID do livro a apagar? ", SIZE_ID, FALSE);
 
     if(!Delete(id)){
-        printf("Error ao tentar apagar.\n");
+        printf("Error ao tentar apagar.\n\n");
     } else {
         printf("Livro com o ID '%s' apagado.\n\n", id);
     }
@@ -168,7 +179,7 @@ void Listbooks(){
     printf("\nListar livros\n");
     printf("==================================\n");
     if(!List()){
-        printf("Error ao tentar listar.\n");
+        printf("Error ao tentar listar.\n\n");
     }
 }
 
@@ -179,7 +190,7 @@ void Searchbook(){
     printf("\nListar livros por '%s'\n", s);
     printf("==================================\n");
     if(!Search(s)){
-        printf("Error ao tentar listar.\n");
+        printf("Error ao tentar listar.\n\n");
     }
     
 }

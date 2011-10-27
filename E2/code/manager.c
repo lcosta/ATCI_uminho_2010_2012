@@ -88,21 +88,22 @@ int Edit(char id[], t_book * book){
         t_book bookR;
         book->status = 'a';
         int i=1;
-        int run=TRUE;
-        while (run && !feof(pFile) && fread (&bookR,1, sizeof(t_book),pFile)) {
+        while (!feof(pFile) && fread (&bookR,1, sizeof(t_book),pFile)) {
 
             if(strcmp(bookR.id, id) == 0){
-                fseek ( pFile , (sizeof(t_book) * i)-sizeof(t_book) , SEEK_SET );
-                fwrite (book , 1 , sizeof(t_book) , pFile );
-                run=FALSE;
+                fseek (pFile , (sizeof(t_book) * i)-sizeof(t_book) , SEEK_SET);
+                strcpy(book->id, bookR.id);
+                fwrite (book , 1 , sizeof(t_book) , pFile);
+                fclose(pFile);
+                return 1;
             } else {
                 i++;
             }
 
         }    
-        fclose (pFile);
+        fclose(pFile);
 
-        return 1;
+        return -1;
     }
     return 0;
 }
